@@ -41,6 +41,7 @@ const HRDashboard = () => {
   const [pagination, setPagination] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageParams = parseInt(searchParams.get('page')) || 1;
+  const [jumpPage, setJumpPage] = useState('');
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -73,6 +74,36 @@ const HRDashboard = () => {
 
   const handlePageChange = (newPage) => {
     setSearchParams({ page: newPage });
+  };
+
+  const getPageNumbers = () => {
+    if (!pagination) return [];
+    
+    const { current_page, total_pages } = pagination;
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= total_pages; i++) {
+      if (i === 1 || i === total_pages || (i >= current_page - delta && i <= current_page + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach(i => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
   };
 
   const handleOpenModal = (employee = null) => {
@@ -314,14 +345,18 @@ const HRDashboard = () => {
                     <ChevronLeft size={18} />
                   </button>
 
-                  {[...Array(pagination.total_pages)].map((_, i) => (
-                    <button
-                      key={i + 1}
-                      onClick={() => handlePageChange(i + 1)}
-                      className={`pagi-btn ${pagination.current_page === i + 1 ? 'active' : ''}`}
-                    >
-                      {i + 1}
-                    </button>
+                  {getPageNumbers().map((pageNumber, i) => (
+                    pageNumber === '...' ? (
+                      <span key={`dots-${i}`} className="pagi-dots">...</span>
+                    ) : (
+                      <button
+                        key={pageNumber}
+                        onClick={() => handlePageChange(pageNumber)}
+                        className={`pagi-btn ${pagination.current_page === pageNumber ? 'active' : ''}`}
+                      >
+                        {pageNumber}
+                      </button>
+                    )
                   ))}
 
                   <button
@@ -332,6 +367,41 @@ const HRDashboard = () => {
                     <ChevronRight size={18} />
                   </button>
                 </div>
+                {pagination.total_pages > 5 && (
+                  <div className="pagination-jump">
+                    <span className="jump-text">Go to:</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max={pagination.total_pages}
+                      value={jumpPage}
+                      onChange={(e) => setJumpPage(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const page = parseInt(jumpPage);
+                          if (page >= 1 && page <= pagination.total_pages) {
+                            handlePageChange(page);
+                            setJumpPage('');
+                          }
+                        }
+                      }}
+                      placeholder="Page"
+                      className="jump-input"
+                    />
+                    <button 
+                      onClick={() => {
+                        const page = parseInt(jumpPage);
+                        if (page >= 1 && page <= pagination.total_pages) {
+                          handlePageChange(page);
+                          setJumpPage('');
+                        }
+                      }}
+                      className="jump-btn"
+                    >
+                      Go
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -897,6 +967,8 @@ const HRDashboard = () => {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
           border-top: 1px solid rgba(255, 255, 255, 0.05);
           background: rgba(255, 255, 255, 0.01);
         }
@@ -914,6 +986,17 @@ const HRDashboard = () => {
         .pagination-controls {
           display: flex;
           gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .pagi-dots {
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          color: #94a3b8;
+          padding: 0 0.25rem;
+          font-weight: 600;
+          letter-spacing: 2px;
         }
 
         .pagi-btn {
@@ -944,6 +1027,64 @@ const HRDashboard = () => {
         .pagi-btn:disabled {
           opacity: 0.4;
           cursor: not-allowed;
+        }
+
+        .pagination-jump {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .jump-text {
+          color: #94a3b8;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+
+        .jump-input {
+          width: 70px;
+          height: 36px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 0.5rem;
+          color: white;
+          padding: 0 0.5rem;
+          text-align: center;
+          font-size: 0.875rem;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+
+        .jump-input:focus {
+          border-color: var(--primary);
+        }
+
+        /* Hide Number Input Arrows */
+        .jump-input::-webkit-outer-spin-button,
+        .jump-input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        .jump-input[type=number] {
+          -moz-appearance: textfield;
+        }
+
+        .jump-btn {
+          height: 36px;
+          padding: 0 1rem;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: white;
+          border-radius: 0.5rem;
+          font-weight: 600;
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .jump-btn:hover {
+          background: var(--primary);
+          border-color: var(--primary);
         }
 
         .form-error {
