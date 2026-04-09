@@ -13,8 +13,8 @@ import {
   Settings,
   ShieldCheck
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -37,16 +37,12 @@ const Dashboard = () => {
         </div>
 
         <nav className="sidebar-nav">
-          <NavItem icon={<LayoutDashboard size={20} />} label="Dashboard" active />
-          <NavItem icon={<User size={20} />} label="Profile" />
-          <NavItem icon={<Briefcase size={20} />} label="My Payroll" />
-          <NavItem icon={<Calendar size={20} />} label="Attendance" />
-          <NavItem icon={<Settings size={20} />} label="Settings" />
+          <NavItem icon={<LayoutDashboard size={20} strokeWidth={2.5} />} label="Dashboard" active />
         </nav>
 
         <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-btn">
-            <LogOut size={20} />
+            <LogOut size={20} strokeWidth={2.5} />
             <span>Logout</span>
           </button>
         </div>
@@ -56,13 +52,18 @@ const Dashboard = () => {
       <main className="main-content">
         <header className="top-header">
           <div className="search-bar">
-            <Search size={18} className="search-icon" />
+            <Search size={18} strokeWidth={2.5} className="search-icon" />
             <input type="text" placeholder="Search for reports, payments..." />
           </div>
 
           <div className="header-actions">
+            {user.role === 'hr' && (
+              <Link to="/hr/dashboard" className="btn-secondary-link">
+                Dashboard HR
+              </Link>
+            )}
             <button className="icon-btn">
-              <Bell size={20} />
+              <Bell size={20} strokeWidth={2.5} />
               <span className="badge"></span>
             </button>
             <div className="user-profile">
@@ -85,20 +86,20 @@ const Dashboard = () => {
 
           <div className="stats-grid">
             <StatCard
-              icon={<IndianRupee className="text-primary" />}
+              icon={<IndianRupee className="text-primary" strokeWidth={2.5} />}
               label="Monthly Salary"
               value={`₹${user.salary.toLocaleString()}`}
               trend="+4.5%"
               color="indigo"
             />
             <StatCard
-              icon={<Briefcase className="text-secondary" />}
+              icon={<Briefcase className="text-secondary" strokeWidth={2.5} />}
               label="Designation"
               value={user.designation}
               color="pink"
             />
             <StatCard
-              icon={<ShieldCheck className="text-success" />}
+              icon={<ShieldCheck className="text-success" strokeWidth={2.5} />}
               label="Status"
               value={user.active ? 'Active' : 'Inactive'}
               color="emerald"
@@ -285,6 +286,23 @@ const Dashboard = () => {
           display: flex;
           align-items: center;
           gap: 1.5rem;
+        }
+
+        .btn-secondary-link {
+          background: rgba(99, 102, 241, 0.1);
+          color: var(--primary);
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          text-decoration: none;
+          font-size: 0.875rem;
+          font-weight: 600;
+          border: 1px solid rgba(99, 102, 241, 0.2);
+          transition: all 0.2s;
+        }
+
+        .btn-secondary-link:hover {
+          background: var(--primary);
+          color: white;
         }
 
         .icon-btn {
