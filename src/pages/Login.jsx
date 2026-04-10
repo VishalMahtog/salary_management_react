@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LogIn, Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 import { authService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -17,13 +18,22 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setErrorMessage('');
 
     try {
       const response = await authService.login(email, password);
       login(response.data, response.token);
-      navigate('/dashboard');
+
+      if (response.data.role === 'hr') {
+        navigate('/hr');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password');
+      const backendError = err.response?.data?.error || 'Invalid email or password';
+      setError(backendError);
+      setErrorMessage(backendError);
+      setTimeout(() => setErrorMessage(''), 5000);
     } finally {
       setIsLoading(false);
     }
@@ -31,6 +41,20 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      <AnimatePresence>
+        {errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="toast error"
+          >
+            <AlertCircle size={20} />
+            <span>{errorMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -227,6 +251,29 @@ const Login = () => {
 
         .login-footer a:hover {
           text-decoration: underline;
+        }
+
+        .toast {
+          position: fixed;
+          bottom: 2rem;
+          right: 2rem;
+          padding: 1rem 1.5rem;
+          border-radius: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          z-index: 2000;
+          backdrop-filter: blur(12px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          font-weight: 600;
+          font-size: 0.9375rem;
+        }
+
+        .toast.error {
+          background: rgba(239, 68, 68, 0.15);
+          color: #fca5a5;
+          border-color: rgba(239, 68, 68, 0.2);
         }
       `}</style>
     </div>

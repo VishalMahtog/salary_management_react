@@ -21,9 +21,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/';
+      if (!error.config.url.endsWith('/login')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }
@@ -31,9 +33,7 @@ api.interceptors.response.use(
 
 export const authService = {
   login: async (email, password) => {
-    const response = await api.post('/login', {
-      employee: { email, password }
-    });
+    const response = await api.post('/login', { email, password });
     return response.data;
   },
   logout: async () => {
