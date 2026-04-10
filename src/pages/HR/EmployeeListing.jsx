@@ -134,11 +134,12 @@ const EmployeeListing = () => {
     setFormError('');
     try {
       if (editingEmployee) {
-        const { password, password_confirmation, ...updateData } = formData;
+        const { password, password_confirmation, id, ...updateData } = formData;
         await hrService.updateEmployee(editingEmployee.id, updateData);
         setSuccessMessage('Employee updated successfully');
       } else {
-        await hrService.createEmployee(formData);
+        const { id, ...createData } = formData;
+        await hrService.createEmployee(createData);
         setSuccessMessage('Employee created successfully');
       }
       setIsModalOpen(false);
