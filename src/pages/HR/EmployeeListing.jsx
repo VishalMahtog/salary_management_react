@@ -137,16 +137,25 @@ const EmployeeListing = () => {
         const { password, password_confirmation, id, ...updateData } = formData;
         await hrService.updateEmployee(editingEmployee.id, updateData);
         setSuccessMessage('Employee updated successfully');
+        fetchEmployees(currentPageParams, debouncedSearchTerm);
       } else {
         const { id, ...createData } = formData;
         await hrService.createEmployee(createData);
         setSuccessMessage('Employee created successfully');
+        if (currentPageParams === 1) {
+          fetchEmployees(1, debouncedSearchTerm);
+        } else {
+          searchParams.set('page', '1');
+          setSearchParams(searchParams);
+        }
       }
       setIsModalOpen(false);
-      fetchEmployees(currentPageParams, debouncedSearchTerm);
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
-      setFormError(err.response?.data?.errors?.join(', ') || 'Operation failed');
+      const backendError = err.response?.data?.errors?.join(', ') || err.response?.data?.error || err.response?.data?.message || 'Operation failed';
+      setFormError(backendError);
+      setErrorMessage(backendError);
+      setTimeout(() => setErrorMessage(''), 5000);
     }
   };
 
@@ -261,7 +270,7 @@ const EmployeeListing = () => {
                   <div className="pagination-info">
                     Showing <span>{((pagination.current_page - 1) * pagination.per_page) + 1}</span> to <span>{Math.min(pagination.current_page * pagination.per_page, pagination.total_count)}</span> of <span>{pagination.total_count}</span> results
                   </div>
-                  
+
                   {pagination.total_pages > 1 && (
                     <>
                       <div className="pagination-controls">
