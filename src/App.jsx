@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import EmployeeDashboard from './pages/Employee/Dashboard';
-import HRDashboard from './pages/HR/Dashboard';
+import HRLayout from './pages/HR/HRLayout';
+import EmployeeListing from './pages/HR/EmployeeListing';
+import SalaryStatistics from './pages/HR/SalaryStatistics';
+import JobTitleStatistics from './pages/HR/JobTitleStatistics';
 import './index.css';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -36,8 +39,8 @@ const AppRoutes = () => {
       <Route
         path="/"
         element={
-          token 
-            ? <Navigate to="/dashboard" replace /> 
+          token
+            ? <Navigate to={user?.role === 'hr' ? "/hr" : "/dashboard"} replace />
             : <Login />
         }
       />
@@ -50,13 +53,19 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/hr/dashboard"
+        path="/hr"
         element={
           <ProtectedRoute allowedRoles={['hr']}>
-            <HRDashboard />
+            <HRLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<Navigate to="employees" replace />} />
+        <Route path="employees" element={<EmployeeListing />} />
+        <Route path="salary-stats" element={<SalaryStatistics />} />
+        <Route path="job-title-stats" element={<JobTitleStatistics />} />
+      </Route>
+      <Route path="/hr/dashboard" element={<Navigate to="/hr/employees" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

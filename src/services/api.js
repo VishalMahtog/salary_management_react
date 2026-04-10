@@ -42,8 +42,8 @@ export const authService = {
 };
 
 export const hrService = {
-  getEmployees: async (page = 1) => {
-    const response = await api.get(`/hr/employees?page=${page}`);
+  getEmployees: async (params) => {
+    const response = await api.get('/hr/employees', { params });
     return response.data;
   },
   createEmployee: async (data) => {
@@ -56,6 +56,14 @@ export const hrService = {
   },
   deleteEmployee: async (id) => {
     const response = await api.delete(`/hr/employees/${id}`);
+    return response.data;
+  },
+  getSalaryStats: async (params) => {
+    const response = await api.get('/hr/salaries/salary_stats', { params });
+    return response.data;
+  },
+  getJobTitleStats: async (params) => {
+    const response = await api.get('/hr/salaries/job_title_stats', { params });
     return response.data;
   },
 };
