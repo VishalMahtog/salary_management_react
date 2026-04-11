@@ -9,7 +9,16 @@ import {
   CheckCircle2,
   AlertCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Eye,
+  EyeOff,
+  User,
+  Mail,
+  Briefcase,
+  Globe,
+  IndianRupee,
+  Shield,
+  Lock
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { hrService } from '../../services/api';
@@ -35,6 +44,8 @@ const EmployeeListing = () => {
   const currentPageParams = parseInt(searchParams.get('page')) || 1;
   const searchTerm = searchParams.get('search') || '';
   const [jumpPage, setJumpPage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -126,6 +137,8 @@ const EmployeeListing = () => {
       });
     }
     setFormError('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
     setIsModalOpen(true);
   };
 
@@ -376,76 +389,102 @@ const EmployeeListing = () => {
                 <div className="form-grid">
                   <div className="input-group">
                     <label className="input-label">Full Name</label>
-                    <input
-                      type="text"
-                      className="input-field"
-                      value={formData.full_name}
-                      onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                      required
-                    />
+                    <div className="input-with-icon">
+                      <User size={18} className="input-icon" />
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="John Doe"
+                        value={formData.full_name}
+                        onChange={e => setFormData({ ...formData, full_name: e.target.value })}
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="input-group">
                     <label className="input-label">Email</label>
-                    <input
-                      type="email"
-                      className="input-field"
-                      value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      required
-                    />
+                    <div className="input-with-icon">
+                      <Mail size={18} className="input-icon" />
+                      <input
+                        type="email"
+                        className="input-field"
+                        placeholder="john@example.com"
+                        value={formData.email}
+                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="input-group">
                     <label className="input-label">Job Title</label>
-                    <input
-                      type="text"
-                      className="input-field"
-                      value={formData.job_title}
-                      onChange={e => setFormData({ ...formData, job_title: e.target.value })}
-                      required
-                    />
+                    <div className="input-with-icon">
+                      <Briefcase size={18} className="input-icon" />
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="Software Engineer"
+                        value={formData.job_title}
+                        onChange={e => setFormData({ ...formData, job_title: e.target.value })}
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="input-group">
                     <label className="input-label">Designation</label>
-                    <select
-                      className="input-field"
-                      value={formData.designation}
-                      onChange={e => setFormData({ ...formData, designation: e.target.value })}
-                    >
-                      <option value="">Select Designation</option>
-                      {designations.map(des => (
-                        <option key={des} value={des}>{des}</option>
-                      ))}
-                    </select>
+                    <div className="input-with-icon">
+                      <Shield size={18} className="input-icon" />
+                      <select
+                        className="input-field"
+                        value={formData.designation}
+                        onChange={e => setFormData({ ...formData, designation: e.target.value })}
+                      >
+                        <option value="">Select Designation</option>
+                        {designations.map(des => (
+                          <option key={des} value={des}>{des}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <div className="input-group">
                     <label className="input-label">Salary (₹)</label>
-                    <input
-                      type="number"
-                      className="input-field"
-                      value={formData.salary}
-                      onChange={e => setFormData({ ...formData, salary: parseFloat(e.target.value) })}
-                      required
-                    />
+                    <div className="input-with-icon">
+                      <IndianRupee size={18} className="input-icon" />
+                      <input
+                        type="number"
+                        className="input-field"
+                        placeholder="50000"
+                        value={formData.salary || ''}
+                        onChange={e => setFormData({ ...formData, salary: parseFloat(e.target.value) || 0 })}
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="input-group">
                     <label className="input-label">Country</label>
-                    <input
-                      type="text"
-                      className="input-field"
-                      value={formData.country}
-                      onChange={e => setFormData({ ...formData, country: e.target.value })}
-                    />
+                    <div className="input-with-icon">
+                      <Globe size={18} className="input-icon" />
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="India"
+                        value={formData.country}
+                        onChange={e => setFormData({ ...formData, country: e.target.value })}
+                      />
+                    </div>
                   </div>
                   <div className="input-group">
                     <label className="input-label">Role</label>
-                    <select
-                      className="input-field"
-                      value={formData.role}
-                      onChange={e => setFormData({ ...formData, role: e.target.value })}
-                    >
-                      <option value="employee">Employee</option>
-                      <option value="hr">HR Admin</option>
-                    </select>
+                    <div className="input-with-icon">
+                      <Shield size={18} className="input-icon" />
+                      <select
+                        className="input-field"
+                        value={formData.role}
+                        onChange={e => setFormData({ ...formData, role: e.target.value })}
+                      >
+                        <option value="employee">Employee</option>
+                        <option value="hr">HR Admin</option>
+                      </select>
+                    </div>
                   </div>
                   <div className="input-group checkbox-group">
                     <label className="checkbox-label">
@@ -462,23 +501,47 @@ const EmployeeListing = () => {
                     <>
                       <div className="input-group">
                         <label className="input-label">Password</label>
-                        <input
-                          type="password"
-                          className="input-field"
-                          value={formData.password}
-                          onChange={e => setFormData({ ...formData, password: e.target.value })}
-                          required
-                        />
+                        <div className="password-input-wrapper">
+                          <Lock size={18} className="input-icon" style={{ left: '14px', position: 'absolute', color: '#64748b', pointerEvents: 'none' }} />
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            className="input-field"
+                            style={{ paddingLeft: '2.85rem' }}
+                            placeholder="••••••••"
+                            value={formData.password}
+                            onChange={e => setFormData({ ...formData, password: e.target.value })}
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="password-toggle"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
                       </div>
                       <div className="input-group">
                         <label className="input-label">Confirm Password</label>
-                        <input
-                          type="password"
-                          className="input-field"
-                          value={formData.password_confirmation}
-                          onChange={e => setFormData({ ...formData, password_confirmation: e.target.value })}
-                          required
-                        />
+                        <div className="password-input-wrapper">
+                          <Lock size={18} className="input-icon" style={{ left: '14px', position: 'absolute', color: '#64748b', pointerEvents: 'none' }} />
+                          <input
+                            type={showConfirmPassword ? "text" : "password"}
+                            className="input-field"
+                            style={{ paddingLeft: '2.85rem' }}
+                            placeholder="••••••••"
+                            value={formData.password_confirmation}
+                            onChange={e => setFormData({ ...formData, password_confirmation: e.target.value })}
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="password-toggle"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
                       </div>
                     </>
                   )}

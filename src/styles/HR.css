@@ -249,6 +249,12 @@
   overflow: hidden;
 }
 
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .portal-table {
   width: 100%;
   border-collapse: collapse;
@@ -323,19 +329,26 @@
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(12px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 1000;
+  overflow-y: auto;
+  padding: 2.5rem 1rem;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-content {
   width: 100%;
   max-width: 650px;
   padding: 2rem;
-  max-height: 90vh;
-  overflow-y: auto;
+  margin: auto;
 }
 
 .form-grid {
@@ -506,6 +519,7 @@
 }
 .jump-input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .jump-btn {
@@ -620,6 +634,7 @@
   font-weight: 700;
   background: linear-gradient(135deg, #fff, #94a3b8);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -637,4 +652,55 @@
   background: rgba(255, 255, 255, 0.05);
   color: white;
   border-color: #374151;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.password-toggle:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: #64748b;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-with-icon .input-field {
+  padding-left: 2.85rem;
+}
+
+.input-with-icon select.input-field {
+  appearance: none;
+  cursor: pointer;
 }
