@@ -41,7 +41,6 @@ const HRLayout = () => {
     { path: '/hr/employees', icon: Users, label: 'Employee Listing' },
     { path: '/hr/salary-stats', icon: BarChart, label: 'Salary Statistics' },
     { path: '/hr/job-title-stats', icon: Briefcase, label: 'Job Title Statistics' },
-    { path: '/dashboard', icon: User, label: 'Personal View' },
   ];
 
   return (
